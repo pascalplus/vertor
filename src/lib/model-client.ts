@@ -1,6 +1,7 @@
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { createOpenAI } from "@ai-sdk/openai";
+import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import type { LanguageModel } from "ai";
 import { getModel, type ModelOption } from "./models";
 
@@ -36,6 +37,13 @@ export function resolveModel(modelId: string): LanguageModel | string {
       apiKey: process.env.OPENAI_API_KEY,
     });
     return openai(model.id);
+  }
+
+  if (process.env.OPENROUTER_API_KEY) {
+    const openrouter = createOpenRouter({
+      apiKey: process.env.OPENROUTER_API_KEY,
+    });
+    return openrouter(model.id);
   }
 
   // Fallback: the AI SDK treats a plain "provider/model" string as a Gateway
