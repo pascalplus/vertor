@@ -43,7 +43,7 @@ export function resolveModel(modelId: string): LanguageModel | string {
     const openrouter = createOpenRouter({
       apiKey: process.env.OPENROUTER_API_KEY,
     });
-    return openrouter(model.id);
+    return openrouter(model.gateway);
   }
 
   // Fallback: the AI SDK treats a plain "provider/model" string as a Gateway

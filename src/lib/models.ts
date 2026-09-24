@@ -36,7 +36,7 @@ export const MODELS: ModelOption[] = [
     id: "gemini-3.1-flash-lite-preview",
     label: "Gemini 3.1 Flash Lite Preview",
     provider: "google",
-    gateway: "google/gemini-3.1-flash-lite-preview",
+    gateway: "google/gemini-3.1-flash-lite",
     description: "Fastest, cheapest",
   },
   {
