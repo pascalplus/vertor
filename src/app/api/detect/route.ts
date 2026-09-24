@@ -6,6 +6,7 @@ import { detectionSystem } from "@/lib/prompts";
 import { consumeRateLimit, rateLimitResponse } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
+// Keep automatic detection on a model available to free Gateway users.
 const DETECT_MODEL_ID = "gemini-3.1-flash-lite-preview";
 
 const Body = z.object({
