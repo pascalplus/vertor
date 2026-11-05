@@ -9,8 +9,9 @@ import { getModel, type ModelOption } from "./models";
  * resolveModel — returns an AI SDK LanguageModel for a given model id.
  *
  * Strategy: prefer the direct provider API when its key is set (cheaper, free
- * tier on Google AI Studio, faster path, no Gateway markup). Fall back to the
- * Vercel AI Gateway string when only AI_GATEWAY_API_KEY is configured.
+ * tier on Google AI Studio, faster path, no Gateway markup). Otherwise use the
+ * Vercel AI Gateway, which is the app's default route. OpenRouter remains an
+ * explicit fallback for environments that do not have Gateway access.
  *
  * This means a user can set GOOGLE_GENERATIVE_AI_API_KEY alone and every
  * Google model works without ever touching the Gateway.
@@ -39,6 +40,13 @@ export function resolveModel(modelId: string): LanguageModel | string {
     return openai(model.id);
   }
 
+  // The plain provider/model string is handled by the Vercel AI Gateway.
+  // Prefer it over OpenRouter so an unrelated or stale OpenRouter key cannot
+  // hijack the default route when Gateway access is configured.
+  if (process.env.AI_GATEWAY_API_KEY) {
+    return model.gateway;
+  }
+
   if (process.env.OPENROUTER_API_KEY) {
     const openrouter = createOpenRouter({
       apiKey: process.env.OPENROUTER_API_KEY,
@@ -46,7 +54,5 @@ export function resolveModel(modelId: string): LanguageModel | string {
     return openrouter(model.gateway);
   }
 
-  // Fallback: the AI SDK treats a plain "provider/model" string as a Gateway
-  // request. Requires AI_GATEWAY_API_KEY to be set in the environment.
   return model.gateway;
 }
